@@ -418,7 +418,7 @@
             resultDiv.classList.remove('hidden');
         }
 
-        // --- 2. BMI CALCULATOR LOGIC (New) ---
+        // --- 2. BMI CALCULATOR LOGIC (Updated) ---
         function calculateBMI() {
             const heightCm = parseFloat(document.getElementById('inputHeight').value);
             const weightKg = parseFloat(document.getElementById('inputWeight').value);
@@ -438,25 +438,21 @@
             let colorClass = '';
             let icon = '';
 
-            // 한국 비만 기준 적용
+            // 사용자 요청 기준 적용
             if (bmi < 18.5) {
-                message = "저체중";
+                message = "저체중 (면역력 저하 주의)";
                 colorClass = "bg-slate-100 border-slate-300 text-slate-700";
                 icon = "🍃";
             } else if (bmi < 23) {
-                message = "정상";
+                message = "정상 (현재 유지 목표)";
                 colorClass = "bg-green-50 border-green-200 text-green-700";
                 icon = "✅";
             } else if (bmi < 25) {
-                message = "비만 전단계 (과체중)";
+                message = "비만 전단계 (식습관 교정 골든타임 🚨)";
                 colorClass = "bg-yellow-50 border-yellow-200 text-yellow-700";
                 icon = "⚠️";
-            } else if (bmi < 30) {
-                message = "1단계 비만";
-                colorClass = "bg-orange-50 border-orange-200 text-orange-700";
-                icon = "🚨";
             } else {
-                message = "2단계 비만 (고도비만)";
+                message = "비만 (적극적인 유산소 및 식이 조절 필요)";
                 colorClass = "bg-red-50 border-red-200 text-red-700";
                 icon = "🔥";
             }
