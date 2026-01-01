@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한파와 강풍: 면역력의 상관관계 분석</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <!-- Font: Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F3F4F6; /* slate-100 */
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-12 text-center">
+            <h1 class="text-3xl md:text-5xl font-black mb-4">바람은 어떻게 면역력을 무너뜨리는가?</h1>
+            <p class="text-xl md:text-2xl font-light opacity-90">단순 저온 vs. 강풍 동반 저온의 신체 영향 비교 분석</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 space-y-12">
+
+        <!-- Section 1 -->
+        <section class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-xl shadow-md p-8 border-l-8 border-cyan-500">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">연구 배경: 체감 온도의 함정</h2>
+                <p class="text-lg leading-relaxed text-gray-600 mb-6">
+                    많은 사람들이 단순히 온도계의 숫자(기온)에만 집중합니다. 하지만 인체 면역력에 치명적인 영향을 주는 것은 
+                    피부 표면의 열을 급격히 빼앗아가는 <strong>'바람'</strong>입니다. 
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div class="bg-blue-50 p-6 rounded-lg text-center">
+                        <span class="block text-gray-500 text-sm font-bold uppercase tracking-wider">단순 기온 하락 시 (-5°C)</span>
+                        <span class="block text-4xl font-black text-blue-600 mt-2">체온 손실 속도 1x</span>
+                    </div>
+                    <div class="bg-cyan-50 p-6 rounded-lg text-center border-2 border-cyan-100">
+                        <span class="block text-gray-500 text-sm font-bold uppercase tracking-wider">강풍 동반 시 (-5°C + 10m/s)</span>
+                        <span class="block text-4xl font-black text-red-600 mt-2">체온 손실 속도 4.5x</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Wind Chill Chart -->
+        <section>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div class="lg:col-span-1">
+                    <h3 class="text-2xl font-bold text-blue-800 mb-4 border-b-2 border-blue-200 pb-2">1. 윈드칠(Wind Chill) 효과 분석</h3>
+                    <p class="text-gray-700 mb-4 text-sm leading-7">
+                        바람은 피부 주위를 감싸고 있는 따뜻한 공기층을 날려버립니다. 동일한 영하 5도라도 바람이 불면 체감 온도는 급격히 떨어집니다.
+                    </p>
+                </div>
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">풍속 증가에 따른 체감 온도 변화 추이</h4>
+                    <div class="chart-container max-w-2xl mx-auto">
+                        <canvas id="windChillChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Immunity Chart -->
+        <section>
+            <div class="bg-white rounded-xl shadow-md p-8">
+                <div class="mb-6 text-center max-w-2xl mx-auto">
+                    <h3 class="text-2xl font-bold text-red-700 mb-2">2. 극한 환경에서의 면역 세포 활성도</h3>
+                    <p class="text-gray-600">강풍은 점막을 건조시켜 방어막을 취약하게 만듭니다.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container">
+                        <canvas id="immunityBarChart"></canvas>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-start p-4 bg-gray-50 rounded-lg">
+                            <div class="text-3xl mr-4">🌡️</div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">단순 저온 (Cold Only)</h4>
+                                <p class="text-sm text-gray-600">면역 세포 활성도 약 70% 유지.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start p-4 bg-red-50 border border-red-100 rounded-lg">
+                            <div class="text-3xl mr-4">🌬️</div>
+                            <div>
+                                <h4 class="font-bold text-red-700">저온 + 강풍 (Cold + Wind)</h4>
+                                <p class="text-sm text-gray-700">면역 세포 활성도 40% 미만 급락.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Risk Heatmap -->
+        <section>
+            <div class="grid grid-cols-1 gap-8">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800">3. 감기/독감 감염 위험도 히트맵</h3>
+                        <span class="text-xs font-bold px-3 py-1 bg-red-100 text-red-600 rounded-full mt-2 md:mt-0">Plotly.js</span>
+                    </div>
+                    <div id="riskHeatmap" class="w-full h-[450px] border border-gray-100 rounded-lg"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gemini API Section (Configured for Hardcoded Key) -->
+        <section class="max-w-4xl mx-auto">
+            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg p-8 border border-indigo-100">
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl font-bold text-indigo-900 mb-2 flex justify-center items-center gap-2">
+                        <span>✨</span> AI 맞춤형 한파 위험도 분석기 <span>✨</span>
+                    </h3>
+                    <p class="text-gray-600">현재 날씨와 활동 계획을 입력하시면, AI가 맞춤형 건강 조언을 제공합니다.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">현재 기온 (°C)</label>
+                        <input type="number" id="inputTemp" value="-5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">풍속 (m/s)</label>
+                        <input type="number" id="inputWind" value="10" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">활동 유형</label>
+                        <select id="inputActivity" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="출퇴근/통학">출퇴근/통학 (걷기)</option>
+                            <option value="야외 운동">야외 운동 (러닝, 등산)</option>
+                            <option value="야외 작업">야외 장시간 작업</option>
+                            <option value="가벼운 산책">가벼운 산책</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="getGeminiAdvice()" id="btnGenerate" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-lg shadow-md transition-colors flex justify-center items-center gap-2">
+                    <span>✨ AI 조언 받기</span>
+                </button>
+
+                <div id="aiOutputContainer" class="hidden mt-8 bg-white p-6 rounded-lg border border-indigo-100 shadow-inner">
+                    <h4 class="text-lg font-bold text-indigo-800 mb-4 border-b pb-2">Gemini의 분석 결과</h4>
+                    <div id="aiLoading" class="hidden text-center py-4">
+                        <div class="loader mr-2"></div>
+                        <span class="text-gray-500">분석 중...</span>
+                    </div>
+                    <div id="aiResponse" class="prose prose-sm max-w-none text-gray-700 leading-relaxed"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Solutions -->
+        <section class="max-w-5xl mx-auto">
+            <h3 class="text-2xl font-bold text-center text-gray-800 mb-8">대응 전략: '바람'을 차단하라</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="relative bg-white p-6 rounded-xl shadow-sm border-t-4 border-blue-500">
+                    <h4 class="text-center font-bold text-lg mt-2 mb-2">1. 방풍 레이어링</h4>
+                    <p class="text-sm text-center text-gray-600">가장 바깥쪽에는 반드시 바람을 막는 소재 착용.</p>
+                </div>
+                <div class="relative bg-white p-6 rounded-xl shadow-sm border-t-4 border-cyan-500">
+                    <h4 class="text-center font-bold text-lg mt-2 mb-2">2. 점막 습도 유지</h4>
+                    <p class="text-sm text-center text-gray-600">마스크 착용으로 내쉬는 숨의 습기 유지.</p>
+                </div>
+                <div class="relative bg-white p-6 rounded-xl shadow-sm border-t-4 border-red-500">
+                    <h4 class="text-center font-bold text-lg mt-2 mb-2">3. 노출 부위 최소화</h4>
+                    <p class="text-sm text-center text-gray-600">목도리, 장갑으로 피부 노출 0% 도전.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-8 mt-12">
+        <div class="container mx-auto px-6 text-center text-sm">
+            <p>&copy; 2024 Health & Weather Analytics Lab. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- ⚠️ 중요: 여기에 본인의 API 키를 입력하세요 ⚠️ ---
+        // 구글 클라우드 콘솔에서 'https://leestriker.github.io/HealthCare/*' 리퍼러 제한을 설정했는지 확인하세요.
+        const MY_GEMINI_API_KEY = "AIzaSyAPufdT1nLBdbNroo1bdmGB6foe6Nuxdng"; 
+
+        // --- 1. Utilities ---
+        function wrapLabel(str, maxChars = 16) {
+            if (str.length <= maxChars) return str;
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + 1 + words[i].length <= maxChars) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            return Array.isArray(label) ? label.join(' ') : label;
+                        }
+                    }
+                }
+            }
+        };
+
+        // --- 2. Charts Initialization ---
+        const ctxWind = document.getElementById('windChillChart').getContext('2d');
+        const windLabels = ["0m/s (정지)", "5m/s (약한 바람)", "10m/s (강한 바람)", "15m/s (매우 강한 바람)", "20m/s (태풍급)"];
+        new Chart(ctxWind, {
+            type: 'line',
+            data: {
+                labels: windLabels.map(l => wrapLabel(l, 16)),
+                datasets: [
+                    {
+                        label: '실제 기온 (-5°C)',
+                        data: [-5, -5, -5, -5, -5],
+                        borderColor: '#9CA3AF',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    },
+                    {
+                        label: '체감 온도',
+                        data: [-5, -9, -13, -16, -19],
+                        borderColor: '#2563EB',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#DC2626',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                scales: { y: { suggestedMin: -25, suggestedMax: 0 } }
+            }
+        });
+
+        const ctxImmune = document.getElementById('immunityBarChart').getContext('2d');
+        const immuneLabels = ["정상 체온 (36.5°C)", "단순 기온 하락 (-0.5°C)", "기온 하락 + 강풍 (-2°C)"];
+        new Chart(ctxImmune, {
+            type: 'bar',
+            data: {
+                labels: immuneLabels.map(l => wrapLabel(l, 18)),
+                datasets: [{
+                    label: '면역 세포 활성도 (%)',
+                    data: [100, 72, 38],
+                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { ...commonOptions.plugins, legend: { display: false } },
+                scales: { y: { max: 100, beginAtZero: true } }
+            }
+        });
+
+        // --- 3. Plotly Heatmap ---
+        const dataPlotly = [{
+            z: [[10, 25, 40, 55, 65], [30, 50, 65, 80, 85], [50, 70, 85, 95, 98], [70, 85, 95, 99, 100]],
+            x: ["0 m/s", "5 m/s", "10 m/s", "15 m/s", "20 m/s"],
+            y: ["0°C", "-5°C", "-10°C", "-15°C"],
+            type: 'heatmap',
+            colorscale: [[0, '#E0F2FE'], [0.4, '#FCD34D'], [0.7, '#F97316'], [1, '#DC2626']],
+            hovertemplate: '기온: %{y}<br>풍속: %{x}<br><b>위험도: %{z}%</b><extra></extra>'
+        }];
+        Plotly.newPlot('riskHeatmap', dataPlotly, {
+            margin: { t: 30, l: 60, r: 30, b: 50 },
+            xaxis: { title: '풍속' },
+            yaxis: { title: '기온' }
+        }, { responsive: true, displayModeBar: false });
+
+        // --- 4. Gemini API Call ---
+        async function getGeminiAdvice() {
+            const temp = document.getElementById('inputTemp').value;
+            const wind = document.getElementById('inputWind').value;
+            const activity = document.getElementById('inputActivity').value;
+            
+            const outputContainer = document.getElementById('aiOutputContainer');
+            const loader = document.getElementById('aiLoading');
+            const responseDiv = document.getElementById('aiResponse');
+            
+            // Validation
+            if (MY_GEMINI_API_KEY.includes("YOUR_API_KEY") || MY_GEMINI_API_KEY.length < 10) {
+                alert("GitHub Pages에 배포하기 전에 index.html 파일의 MY_GEMINI_API_KEY 변수에 실제 API 키를 입력해주세요.");
+                return;
+            }
+
+            outputContainer.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            loader.classList.add('flex', 'justify-center', 'items-center');
+            responseDiv.innerHTML = '';
+            
+            // Using standard model endpoint for general keys
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${MY_GEMINI_API_KEY}`;
+            
+            const prompt = `
+                당신은 한파 및 건강 안전 전문가입니다.
+                상황: 기온 ${temp}°C, 풍속 ${wind}m/s, 활동: ${activity}.
+                이 데이터를 바탕으로 체감 온도 영향, 활동 시 주의점, 복장 추천을 한국어로 마크다운 형식으로 짧게 조언해주세요.
+            `;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                if (!response.ok) throw new Error(response.status);
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                
+                responseDiv.innerHTML = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+
+            } catch (error) {
+                console.error(error);
+                responseDiv.innerHTML = `<p class="text-red-600">오류가 발생했습니다. (Google Cloud Console에서 리퍼러 제한 설정을 확인하세요)</p>`;
+            } finally {
+                loader.classList.add('hidden');
+                loader.classList.remove('flex');
+            }
+        }
+    </script>
+</body>
+</html>
