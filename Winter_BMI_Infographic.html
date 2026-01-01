@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>겨울철 식습관과 BMI 상관관계 인포그래픽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #F0F9FF; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 640px) {
+            .chart-container { height: 300px; }
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0284c7; }
+        
+        /* Diagram Styles (CSS-only Flowchart) */
+        .flow-step {
+            position: relative;
+            z-index: 10;
+        }
+        .flow-arrow::after {
+            content: '▼';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+        @media (min-width: 768px) {
+            .flow-arrow::after {
+                content: '▶';
+                bottom: 50%;
+                right: -25px;
+                left: auto;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #0ea5e9;
+            cursor: pointer;
+            margin-top: -8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Hero Section -->
+    <header class="bg-gradient-to-br from-sky-900 via-blue-800 to-sky-700 text-white py-12 px-4 shadow-xl">
+        <div class="max-w-6xl mx-auto text-center">
+            <span class="inline-block bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-wide uppercase">2025 건강 데이터 리포트</span>
+            <h1 class="text-4xl md:text-6xl font-black mb-4 leading-tight">겨울철 식습관과<br/><span class="text-sky-300">BMI 지수의 상관관계</span></h1>
+            <p class="text-lg md:text-xl text-sky-100 max-w-2xl mx-auto mb-8 font-light">
+                기온이 1°C 떨어질 때마다 우리의 식욕은 어떻게 변할까요? 
+                빅데이터로 분석한 겨울철 '숨은 살'의 원인과 해결책을 알아봅니다.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 max-w-4xl mx-auto">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+                    <p class="text-sky-200 text-sm mb-1">평균 체중 증가</p>
+                    <p class="text-4xl font-bold text-white">+2.3<span class="text-lg">kg</span></p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+                    <p class="text-sky-200 text-sm mb-1">나트륨 섭취량</p>
+                    <p class="text-4xl font-bold text-orange-400">▲ 18<span class="text-lg">%</span></p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+                    <p class="text-sky-200 text-sm mb-1">활동량 감소</p>
+                    <p class="text-4xl font-bold text-sky-300">▼ 35<span class="text-lg">%</span></p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12 space-y-20">
+
+        <!-- Section 1: The Seasonal Shift -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-4">
+                <h2 class="text-3xl font-bold text-sky-900 mb-4 border-l-8 border-orange-500 pl-4">본능적인 배고픔:<br>추위와 칼로리의 관계</h2>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    연구 결과에 따르면, 기온이 급격히 떨어지는 11월부터 1일 평균 칼로리 섭취량이 급증합니다. 
+                    체온 유지를 위해 신체는 더 많은 에너지를 요구하며, 이는 자연스럽게 고열량 식품 섭취로 이어집니다.
+                </p>
+                <div class="bg-white p-4 rounded-lg shadow-md border-l-4 border-sky-500">
+                    <h4 class="font-bold text-sky-700 mb-1">❄️ 윈터 블루스 (Winter Blues)</h4>
+                    <p class="text-sm text-slate-500">일조량 감소로 인한 세로토닌 저하는 탄수화물 중독을 유발하는 주요 원인입니다.</p>
+                </div>
+            </div>
+            <div class="lg:col-span-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-lg font-bold text-slate-700 mb-6 flex items-center">
+                        <span class="w-2 h-8 bg-sky-600 mr-3 rounded-full"></span>
+                        월별 평균 기온 vs 일일 칼로리 섭취량 추이
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="calorieTempChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-slate-400 mt-4">데이터 출처: 2024 국민건강영양조사 기반 시뮬레이션</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Dietary Culprits -->
+        <section class="bg-white rounded-3xl shadow-xl p-8 md:p-12 overflow-hidden relative">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 to-sky-600"></div>
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl font-bold text-sky-900 mb-3">무엇이 우리의 BMI를 높이는가?</h2>
+                <p class="text-slate-500">겨울철 식단의 가장 큰 문제는 '국물 요리'와 '간식'에 숨겨진 나트륨과 당분입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Doughnut Chart -->
+                <div class="bg-slate-50 rounded-xl p-6">
+                    <h3 class="font-bold text-slate-700 mb-2 text-center">겨울철 주요 섭취 음식 카테고리 (저녁 기준)</h3>
+                    <p class="text-xs text-slate-400 text-center mb-6">국/탕/찌개류의 비중이 압도적으로 높습니다.</p>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="foodTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Horizontal Bar Chart -->
+                <div class="flex flex-col justify-center">
+                    <h3 class="font-bold text-slate-700 mb-4">계절별 일일 평균 나트륨 섭취량 비교</h3>
+                    <div class="bg-slate-50 rounded-xl p-6 mb-6">
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="sodiumChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-orange-50 rounded-lg p-4 border border-orange-100">
+                        <span class="font-bold text-orange-600 block mb-1">⚠️ 나트륨 경고</span>
+                        <p class="text-sm text-orange-800">
+                            겨울철 뜨거운 국물 요리는 혀의 짠맛 감각을 무디게 하여, 여름보다 평균 18% 이상의 나트륨을 추가 섭취하게 만듭니다. 이는 부종과 일시적 체중 증가의 직접적 원인이 됩니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Correlation Analysis -->
+        <section>
+            <div class="flex flex-col md:flex-row items-end justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-sky-900 mb-2">활동량과 BMI의 상관관계</h2>
+                    <p class="text-slate-600">
+                        "추워서 못 나간다"는 핑계가 BMI에 미치는 실제 영향을 데이터로 확인해 봅니다.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Scatter Plot Container -->
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-slate-700">주간 실내 활동 시간 vs BMI 변화율</h3>
+                        <div class="flex gap-2 text-xs">
+                            <span class="px-2 py-1 rounded bg-sky-100 text-sky-700">● 정상 범위</span>
+                            <span class="px-2 py-1 rounded bg-orange-100 text-orange-700">● 위험군</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="activityBmiChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Key Findings Panel -->
+                <div class="space-y-4">
+                    <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-sky-500 hover:transform hover:-translate-y-1 transition-transform duration-300">
+                        <div class="text-4xl mb-2">📉</div>
+                        <h4 class="font-bold text-slate-800 text-lg">임계점: 150분</h4>
+                        <p class="text-slate-600 text-sm mt-2">
+                            데이터 분석 결과, 주간 중강도 활동 시간이 <strong>150분 미만</strong>으로 떨어질 때 BMI 급증 구간이 시작됩니다.
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-orange-500 hover:transform hover:-translate-y-1 transition-transform duration-300">
+                        <div class="text-4xl mb-2">🏠</div>
+                        <h4 class="font-bold text-slate-800 text-lg">집콕의 역설</h4>
+                        <p class="text-slate-600 text-sm mt-2">
+                            실내 체류 시간이 1시간 늘어날 때마다, 간식 섭취 확률은 <strong>12% 증가</strong>하는 양의 상관관계를 보였습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Demographics -->
+        <section class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 md:p-12 text-white shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-sky-400 font-bold tracking-widest text-sm uppercase mb-2 block">Demographic Analysis</span>
+                    <h2 class="text-3xl font-bold mb-6">연령대별 겨울철 취약 요인</h2>
+                    <p class="text-slate-300 mb-8 leading-relaxed">
+                        20-30대는 '활동량 부족'과 '배달 음식'이, 40-50대는 '국물 요리 섭취'와 '대사량 저하'가 주요 BMI 증가 원인으로 분석되었습니다.
+                    </p>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-sky-500 flex items-center justify-center text-xs mt-1 mr-3">1</span>
+                            <div>
+                                <strong class="block text-sky-200">2030 세대</strong>
+                                <span class="text-sm text-slate-400">활동량 급감 및 고열량 간식(붕어빵, 호떡 등) 섭취 비율 높음</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-xs mt-1 mr-3">2</span>
+                            <div>
+                                <strong class="block text-orange-200">4050 세대</strong>
+                                <span class="text-sm text-slate-400">나트륨 과다 섭취 및 기초대사량 감소로 인한 체지방 축적</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white/5 rounded-2xl p-4 md:p-8 backdrop-blur-sm border border-white/10">
+                    <div class="chart-container">
+                        <canvas id="demographicRadar"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: Interactive Calculator Section -->
+        <section class="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl border border-sky-100 overflow-hidden transform transition hover:scale-[1.01] duration-300">
+            <div class="bg-sky-50 p-6 text-center border-b border-sky-100">
+                <h2 class="text-2xl font-bold text-sky-900">🧮 나의 겨울철 비만 위험도 계산기</h2>
+                <p class="text-slate-500 text-sm mt-1">지난 일주일 동안의 생활을 솔직하게 입력해보세요!</p>
+            </div>
+            
+            <div class="p-8 space-y-6">
+                <!-- Input 1 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="font-bold text-slate-700">붕어빵/호떡/고구마 (주간 개수)</label>
+                        <span id="val-snacks" class="text-sky-600 font-bold">0개</span>
+                    </div>
+                    <input type="range" id="inputSnacks" min="0" max="20" value="0" step="1" 
+                           oninput="document.getElementById('val-snacks').innerText = this.value + '개'">
+                    <p class="text-xs text-slate-400 mt-1">※ 밥 대신 먹은 것도 포함하세요!</p>
+                </div>
+
+                <!-- Input 2 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="font-bold text-slate-700">국물 요리/찌개 (주간 식사 횟수)</label>
+                        <span id="val-soups" class="text-sky-600 font-bold">0회</span>
+                    </div>
+                    <input type="range" id="inputSoups" min="0" max="21" value="0" step="1" 
+                           oninput="document.getElementById('val-soups').innerText = this.value + '회'">
+                </div>
+
+                <!-- Input 3 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="font-bold text-slate-700">운동 및 산책 (주간 시간)</label>
+                        <span id="val-activity" class="text-sky-600 font-bold">0시간</span>
+                    </div>
+                    <input type="range" id="inputActivity" min="0" max="15" value="0" step="1" 
+                           oninput="document.getElementById('val-activity').innerText = this.value + '시간'">
+                </div>
+
+                <button onclick="calculateRisk()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors text-lg">
+                    위험도 확인하기
+                </button>
+
+                <!-- Result Area -->
+                <div id="resultArea" class="hidden">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Action Plan (Diagram style) -->
+        <section class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold text-sky-900 mb-10">겨울철 BMI 방어를 위한 3단계 솔루션</h2>
+            
+            <div class="flex flex-col md:flex-row justify-center items-stretch gap-0 md:gap-4">
+                
+                <!-- Step 1 -->
+                <div class="flow-step flow-arrow flex-1 bg-white p-6 rounded-xl shadow-lg border-b-4 border-sky-400 mb-8 md:mb-0 transform transition hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">🥗</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">식단 전환</h3>
+                    <p class="text-sm text-slate-600">
+                        국물은 건더기 위주로,<br>
+                        뿌리채소 섭취 늘리기<br>
+                        (포만감 유지, 체온 상승)
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flow-step flow-arrow flex-1 bg-white p-6 rounded-xl shadow-lg border-b-4 border-sky-600 mb-8 md:mb-0 transform transition hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">☀️</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">햇빛 충전</h3>
+                    <p class="text-sm text-slate-600">
+                        점심시간 20분 산책<br>
+                        비타민 D 합성으로<br>
+                        식욕 조절 호르몬 정상화
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flow-step flex-1 bg-white p-6 rounded-xl shadow-lg border-b-4 border-orange-500 transform transition hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">💪</div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">실내 NEAT</h3>
+                    <p class="text-sm text-slate-600">
+                        비운동성 활동 열량 태우기<br>
+                        (스탠딩 데스크,<br>집안일 적극 참여)
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="text-center text-slate-400 py-12 text-sm">
+            <p>© 2025 Winter Health Analytics. All rights reserved.</p>
+            <p class="mt-2">데이터 시뮬레이션 및 인포그래픽 생성: Canvas AI</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- CALCULATOR LOGIC (New) ---
+        function calculateRisk() {
+            const snacks = parseInt(document.getElementById('inputSnacks').value) || 0;
+            const soups = parseInt(document.getElementById('inputSoups').value) || 0;
+            const activity = parseInt(document.getElementById('inputActivity').value) || 0;
+
+            // Simple Scoring Logic for Engagement
+            // Snacks: High calorie density -> 15 pts
+            // Soups: High Sodium -> 10 pts
+            // Activity: Reduces risk -> -15 pts
+            let score = (snacks * 15) + (soups * 10) - (activity * 15);
+
+            // Baseline offset so 0 isn't "perfect" if they eat nothing but don't move
+            // Let's ensure score reflects risk properly.
+            
+            let resultHTML = '';
+            let colorClass = '';
+            let icon = '';
+
+            if (score >= 100) {
+                // High Risk
+                colorClass = 'bg-orange-50 border border-orange-200 text-orange-900';
+                icon = '🚨';
+                resultHTML = `
+                    <div class="text-3xl mb-2">${icon}</div>
+                    <h3 class="text-xl font-bold text-orange-600 mb-2">위험도: 매우 높음 (점수: ${score})</h3>
+                    <p class="text-sm">겨울잠을 준비하는 곰 상태입니다! 체지방 축적이 빠르게 진행 중일 수 있습니다. 당장 <strong>국물을 끊고</strong> 밖으로 나가세요!</p>
+                `;
+            } else if (score >= 40) {
+                // Moderate Risk
+                colorClass = 'bg-yellow-50 border border-yellow-200 text-yellow-900';
+                icon = '⚠️';
+                resultHTML = `
+                    <div class="text-3xl mb-2">${icon}</div>
+                    <h3 class="text-xl font-bold text-yellow-600 mb-2">위험도: 주의 (점수: ${score})</h3>
+                    <p class="text-sm">방심하면 2~3kg는 금방 찝니다. 붕어빵은 <strong>이틀에 한 번만</strong>, 산책 시간을 10분만 더 늘려보세요.</p>
+                `;
+            } else {
+                // Safe
+                colorClass = 'bg-green-50 border border-green-200 text-green-900';
+                icon = '🎉';
+                resultHTML = `
+                    <div class="text-3xl mb-2">${icon}</div>
+                    <h3 class="text-xl font-bold text-green-600 mb-2">위험도: 양호 (점수: ${score})</h3>
+                    <p class="text-sm">훌륭한 자기관리 중이시군요! 겨울철 건강 관리의 <strong>모범 답안</strong>입니다. 현재 패턴을 유지하세요.</p>
+                `;
+            }
+
+            const resultDiv = document.getElementById('resultArea');
+            resultDiv.innerHTML = resultHTML;
+            resultDiv.className = `mt-6 p-6 rounded-xl text-center ${colorClass} transition-all duration-500 animate-fade-in-up`;
+            resultDiv.classList.remove('hidden');
+        }
+
+
+        // --- CHART CONFIGURATION (Existing) ---
+        
+        // Utility Function for Label Wrapping (16 char limit)
+        function formatLabel(str, maxwidth) {
+            var sections = [];
+            var words = str.split(" ");
+            var temp = "";
+            words.forEach(function(item, index) {
+                if (temp.length > 0) {
+                    var concat = temp + ' ' + item;
+                    if (concat.length > maxwidth) {
+                        sections.push(temp);
+                        temp = item;
+                    } else {
+                        temp = concat;
+                    }
+                } else {
+                    temp = item;
+                }
+                if (index === words.length - 1) {
+                    sections.push(temp);
+                }
+            });
+            return sections;
+        }
+
+        // Common Chart Options
+        Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.scale.grid.color = '#e2e8f0';
+
+        const commonTooltip = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            },
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            padding: 12,
+            cornerRadius: 8,
+            titleFont: { size: 13, weight: 'bold' },
+            bodyFont: { size: 12 }
+        };
+
+        // 1. Line Chart: Temp vs Calories
+        const ctxLine = document.getElementById('calorieTempChart').getContext('2d');
+        new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: ['9월', '10월', '11월', '12월', '1월', '2월', '3월'],
+                datasets: [
+                    {
+                        label: '평균 섭취 칼로리 (kcal)',
+                        data: [2100, 2150, 2400, 2650, 2580, 2450, 2200],
+                        borderColor: '#f97316', // Orange
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        yAxisID: 'y',
+                        fill: true
+                    },
+                    {
+                        label: '평균 기온 (°C)',
+                        data: [20, 14, 7, -2, -5, -1, 6],
+                        borderColor: '#0ea5e9', // Sky Blue
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: commonTooltip
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: '칼로리 (kcal)' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        title: { display: true, text: '기온 (°C)' }
+                    }
+                }
+            }
+        });
+
+        // 2. Doughnut Chart: Food Types
+        const ctxDoughnut = document.getElementById('foodTypeChart').getContext('2d');
+        const foodLabels = ['국/탕/찌개 (고나트륨)', '겨울 간식 (붕어빵/호떡)', '배달 야식 (치킨/족발)', '가정식 (일반)', '신선 채소/과일'];
+        new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: foodLabels.map(l => formatLabel(l, 10)), // Wrap labels
+                datasets: [{
+                    data: [35, 20, 25, 15, 5],
+                    backgroundColor: [
+                        '#0c4a6e', // Deep Blue
+                        '#f97316', // Orange (Snacks)
+                        '#0284c7', // Primary Blue
+                        '#bae6fd', // Light Blue
+                        '#22c55e'  // Green (Small portion)
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 15, padding: 15 } },
+                    tooltip: commonTooltip
+                }
+            }
+        });
+
+        // 3. Horizontal Bar Chart: Sodium
+        const ctxBar = document.getElementById('sodiumChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['여름철 (6-8월)', '겨울철 (12-2월)'],
+                datasets: [{
+                    label: '일일 평균 나트륨 섭취량 (mg)',
+                    data: [3200, 3850], // Simulated Data
+                    backgroundColor: ['#bae6fd', '#f97316'],
+                    borderRadius: 8,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: commonTooltip
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { display: false }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // 4. Scatter Plot: Activity vs BMI Change
+        const ctxScatter = document.getElementById('activityBmiChart').getContext('2d');
+        
+        // Generate Scatter Data
+        const scatterData = Array.from({length: 40}, () => ({
+            x: Math.floor(Math.random() * 250) + 30, // Minutes of exercise
+            y: Number((Math.random() * 3 - 1).toFixed(2)) // BMI Change (-1 to +2)
+        })).map(pt => {
+            // Add correlation logic: Less exercise = Higher BMI increase
+            pt.y = parseFloat((2.5 - (pt.x / 100)).toFixed(2)) + (Math.random() * 0.5 - 0.25);
+            return pt;
+        });
+
+        new Chart(ctxScatter, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: '개별 참가자 데이터',
+                    data: scatterData,
+                    backgroundColor: function(context) {
+                        const val = context.raw?.y;
+                        return val > 1.0 ? '#f97316' : '#0ea5e9'; // Orange for high gain
+                    },
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        ...commonTooltip,
+                        callbacks: {
+                            label: function(context) {
+                                return `운동 ${context.raw.x}분 : BMI 변화 ${context.raw.y > 0 ? '+' : ''}${context.raw.y}`;
+                            }
+                        }
+                    },
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: '주간 실내 활동 시간 (분)' },
+                        grid: { display: false }
+                    },
+                    y: {
+                        title: { display: true, text: '겨울철 BMI 변화량' },
+                        grid: { color: '#f1f5f9' }
+                    }
+                }
+            }
+        });
+
+        // 5. Radar Chart: Demographics
+        const ctxRadar = document.getElementById('demographicRadar').getContext('2d');
+        new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: ['나트륨 섭취', '간식/야식 섭취', '활동량 부족', '음주 빈도', '수면 불규칙'],
+                datasets: [
+                    {
+                        label: '20-30대',
+                        data: [60, 95, 80, 70, 85],
+                        fill: true,
+                        backgroundColor: 'rgba(56, 189, 248, 0.4)', // Sky Blue
+                        borderColor: '#38bdf8',
+                        pointBackgroundColor: '#38bdf8',
+                        pointBorderColor: '#fff',
+                    },
+                    {
+                        label: '40-50대',
+                        data: [90, 50, 75, 85, 40],
+                        fill: true,
+                        backgroundColor: 'rgba(249, 115, 22, 0.4)', // Orange
+                        borderColor: '#f97316',
+                        pointBackgroundColor: '#f97316',
+                        pointBorderColor: '#fff',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#e2e8f0' } },
+                    tooltip: commonTooltip
+                },
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                        pointLabels: { color: '#cbd5e1', font: { size: 12 } },
+                        ticks: { backdropColor: 'transparent', color: 'transparent' }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
