@@ -81,7 +81,6 @@
 </head>
 <body class="text-slate-800">
 
-    <!-- Hero Section -->
     <header class="bg-gradient-to-br from-sky-900 via-blue-800 to-sky-700 text-white py-12 px-4 shadow-xl">
         <div class="max-w-6xl mx-auto text-center">
             <span class="inline-block bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-wide uppercase">2025 건강 데이터 리포트</span>
@@ -110,7 +109,6 @@
 
     <main class="max-w-6xl mx-auto px-4 py-12 space-y-20">
 
-        <!-- Section 1: The Seasonal Shift -->
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div class="lg:col-span-4">
                 <h2 class="text-3xl font-bold text-sky-900 mb-4 border-l-8 border-orange-500 pl-4">본능적인 배고픔:<br>추위와 칼로리의 관계</h2>
@@ -137,7 +135,6 @@
             </div>
         </section>
 
-        <!-- Section 2: Dietary Culprits -->
         <section class="bg-white rounded-3xl shadow-xl p-8 md:p-12 overflow-hidden relative">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 to-sky-600"></div>
             
@@ -147,7 +144,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <!-- Doughnut Chart -->
                 <div class="bg-slate-50 rounded-xl p-6">
                     <h3 class="font-bold text-slate-700 mb-2 text-center">겨울철 주요 섭취 음식 카테고리 (저녁 기준)</h3>
                     <p class="text-xs text-slate-400 text-center mb-6">국/탕/찌개류의 비중이 압도적으로 높습니다.</p>
@@ -156,7 +152,6 @@
                     </div>
                 </div>
 
-                <!-- Horizontal Bar Chart -->
                 <div class="flex flex-col justify-center">
                     <h3 class="font-bold text-slate-700 mb-4">계절별 일일 평균 나트륨 섭취량 비교</h3>
                     <div class="bg-slate-50 rounded-xl p-6 mb-6">
@@ -174,7 +169,6 @@
             </div>
         </section>
 
-        <!-- Section 3: Correlation Analysis -->
         <section>
             <div class="flex flex-col md:flex-row items-end justify-between mb-8">
                 <div>
@@ -186,7 +180,6 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Scatter Plot Container -->
                 <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="font-bold text-slate-700">주간 실내 활동 시간 vs BMI 변화율</h3>
@@ -200,7 +193,6 @@
                     </div>
                 </div>
 
-                <!-- Key Findings Panel -->
                 <div class="space-y-4">
                     <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-sky-500 hover:transform hover:-translate-y-1 transition-transform duration-300">
                         <div class="text-4xl mb-2">📉</div>
@@ -220,7 +212,6 @@
             </div>
         </section>
 
-        <!-- Section 4: Demographics -->
         <section class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 md:p-12 text-white shadow-2xl">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div>
@@ -256,63 +247,90 @@
             </div>
         </section>
 
-        <!-- NEW: Interactive Calculator Section -->
-        <section class="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl border border-sky-100 overflow-hidden transform transition hover:scale-[1.01] duration-300">
+        <section class="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl border border-sky-100 overflow-hidden transform transition hover:scale-[1.005] duration-300">
             <div class="bg-sky-50 p-6 text-center border-b border-sky-100">
-                <h2 class="text-2xl font-bold text-sky-900">🧮 나의 겨울철 비만 위험도 계산기</h2>
-                <p class="text-slate-500 text-sm mt-1">지난 일주일 동안의 생활을 솔직하게 입력해보세요!</p>
+                <h2 class="text-2xl font-bold text-sky-900">🧮 겨울철 건강 체크 포인트</h2>
+                <p class="text-slate-500 text-sm mt-1">생활 습관 점검과 비만도(BMI) 측정을 한 번에!</p>
             </div>
             
-            <div class="p-8 space-y-6">
-                <!-- Input 1 -->
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <label class="font-bold text-slate-700">붕어빵/호떡/고구마 (주간 개수)</label>
-                        <span id="val-snacks" class="text-sky-600 font-bold">0개</span>
+            <div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
+                
+                <div class="p-8 space-y-6">
+                    <h3 class="text-xl font-bold text-slate-700 mb-4 flex items-center">
+                        <span class="w-2 h-6 bg-sky-500 mr-2 rounded-full"></span>생활 습관 위험도
+                    </h3>
+                    
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="font-bold text-slate-600 text-sm">붕어빵/호떡/고구마 (주간)</label>
+                            <span id="val-snacks" class="text-sky-600 font-bold">0개</span>
+                        </div>
+                        <input type="range" id="inputSnacks" min="0" max="20" value="0" step="1" 
+                               oninput="document.getElementById('val-snacks').innerText = this.value + '개'">
                     </div>
-                    <input type="range" id="inputSnacks" min="0" max="20" value="0" step="1" 
-                           oninput="document.getElementById('val-snacks').innerText = this.value + '개'">
-                    <p class="text-xs text-slate-400 mt-1">※ 밥 대신 먹은 것도 포함하세요!</p>
-                </div>
 
-                <!-- Input 2 -->
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <label class="font-bold text-slate-700">국물 요리/찌개 (주간 식사 횟수)</label>
-                        <span id="val-soups" class="text-sky-600 font-bold">0회</span>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="font-bold text-slate-600 text-sm">국물 요리 섭취 (주간)</label>
+                            <span id="val-soups" class="text-sky-600 font-bold">0회</span>
+                        </div>
+                        <input type="range" id="inputSoups" min="0" max="21" value="0" step="1" 
+                               oninput="document.getElementById('val-soups').innerText = this.value + '회'">
                     </div>
-                    <input type="range" id="inputSoups" min="0" max="21" value="0" step="1" 
-                           oninput="document.getElementById('val-soups').innerText = this.value + '회'">
-                </div>
 
-                <!-- Input 3 -->
-                <div>
-                    <div class="flex justify-between mb-2">
-                        <label class="font-bold text-slate-700">운동 및 산책 (주간 시간)</label>
-                        <span id="val-activity" class="text-sky-600 font-bold">0시간</span>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="font-bold text-slate-600 text-sm">운동 및 산책 (주간)</label>
+                            <span id="val-activity" class="text-sky-600 font-bold">0시간</span>
+                        </div>
+                        <input type="range" id="inputActivity" min="0" max="15" value="0" step="1" 
+                               oninput="document.getElementById('val-activity').innerText = this.value + '시간'">
                     </div>
-                    <input type="range" id="inputActivity" min="0" max="15" value="0" step="1" 
-                           oninput="document.getElementById('val-activity').innerText = this.value + '시간'">
+
+                    <button onclick="calculateRisk()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors">
+                        습관 위험도 확인하기
+                    </button>
+
+                    <div id="resultArea" class="hidden"></div>
                 </div>
 
-                <button onclick="calculateRisk()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors text-lg">
-                    위험도 확인하기
-                </button>
+                <div class="p-8 space-y-6 bg-slate-50/50">
+                    <h3 class="text-xl font-bold text-slate-700 mb-4 flex items-center">
+                        <span class="w-2 h-6 bg-orange-500 mr-2 rounded-full"></span>BMI 계산기
+                    </h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-slate-600 text-sm font-bold mb-2">신장 (cm)</label>
+                            <input type="number" id="inputHeight" placeholder="예: 175" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-orange-500 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 text-sm font-bold mb-2">체중 (kg)</label>
+                            <input type="number" id="inputWeight" placeholder="예: 70" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-orange-500 transition-colors">
+                        </div>
+                    </div>
 
-                <!-- Result Area -->
-                <div id="resultArea" class="hidden">
-                    <!-- Dynamic Content -->
+                    <div class="bg-white p-4 rounded-lg border border-slate-200 text-xs text-slate-500">
+                        <p>※ BMI 공식 = 체중(kg) ÷ {신장(m) × 신장(m)}</p>
+                        <p class="mt-1">※ 대한비만학회 기준: 23 이상 과체중, 25 이상 비만</p>
+                    </div>
+
+                    <button onclick="calculateBMI()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors">
+                        나의 BMI 계산하기
+                    </button>
+
+                    <div id="bmiResultArea" class="hidden mt-4 p-5 rounded-xl border text-center transition-all duration-500">
+                        </div>
                 </div>
+
             </div>
         </section>
 
-        <!-- Section 5: Action Plan (Diagram style) -->
         <section class="max-w-4xl mx-auto text-center">
             <h2 class="text-3xl font-bold text-sky-900 mb-10">겨울철 BMI 방어를 위한 3단계 솔루션</h2>
             
             <div class="flex flex-col md:flex-row justify-center items-stretch gap-0 md:gap-4">
                 
-                <!-- Step 1 -->
                 <div class="flow-step flow-arrow flex-1 bg-white p-6 rounded-xl shadow-lg border-b-4 border-sky-400 mb-8 md:mb-0 transform transition hover:-translate-y-2">
                     <div class="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">🥗</div>
                     <h3 class="font-bold text-lg text-slate-800 mb-2">식단 전환</h3>
@@ -323,7 +341,6 @@
                     </p>
                 </div>
 
-                <!-- Step 2 -->
                 <div class="flow-step flow-arrow flex-1 bg-white p-6 rounded-xl shadow-lg border-b-4 border-sky-600 mb-8 md:mb-0 transform transition hover:-translate-y-2">
                     <div class="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">☀️</div>
                     <h3 class="font-bold text-lg text-slate-800 mb-2">햇빛 충전</h3>
@@ -334,7 +351,6 @@
                     </p>
                 </div>
 
-                <!-- Step 3 -->
                 <div class="flow-step flex-1 bg-white p-6 rounded-xl shadow-lg border-b-4 border-orange-500 transform transition hover:-translate-y-2">
                     <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">💪</div>
                     <h3 class="font-bold text-lg text-slate-800 mb-2">실내 NEAT</h3>
@@ -354,20 +370,14 @@
     </main>
 
     <script>
-        // --- CALCULATOR LOGIC (New) ---
+        // --- 1. CALCULATOR LOGIC (Risk) ---
         function calculateRisk() {
             const snacks = parseInt(document.getElementById('inputSnacks').value) || 0;
             const soups = parseInt(document.getElementById('inputSoups').value) || 0;
             const activity = parseInt(document.getElementById('inputActivity').value) || 0;
 
-            // Simple Scoring Logic for Engagement
-            // Snacks: High calorie density -> 15 pts
-            // Soups: High Sodium -> 10 pts
-            // Activity: Reduces risk -> -15 pts
+            // Simple Scoring Logic
             let score = (snacks * 15) + (soups * 10) - (activity * 15);
-
-            // Baseline offset so 0 isn't "perfect" if they eat nothing but don't move
-            // Let's ensure score reflects risk properly.
             
             let resultHTML = '';
             let colorClass = '';
@@ -408,10 +418,63 @@
             resultDiv.classList.remove('hidden');
         }
 
+        // --- 2. BMI CALCULATOR LOGIC (New) ---
+        function calculateBMI() {
+            const heightCm = parseFloat(document.getElementById('inputHeight').value);
+            const weightKg = parseFloat(document.getElementById('inputWeight').value);
+            const resultDiv = document.getElementById('bmiResultArea');
+
+            // 유효성 검사
+            if (!heightCm || !weightKg || heightCm <= 0 || weightKg <= 0) {
+                alert("신장과 체중을 정확히 입력해주세요.");
+                return;
+            }
+
+            // BMI 계산: cm를 m로 변환
+            const heightM = heightCm / 100;
+            const bmi = (weightKg / (heightM * heightM)).toFixed(2);
+
+            let message = '';
+            let colorClass = '';
+            let icon = '';
+
+            // 한국 비만 기준 적용
+            if (bmi < 18.5) {
+                message = "저체중";
+                colorClass = "bg-slate-100 border-slate-300 text-slate-700";
+                icon = "🍃";
+            } else if (bmi < 23) {
+                message = "정상";
+                colorClass = "bg-green-50 border-green-200 text-green-700";
+                icon = "✅";
+            } else if (bmi < 25) {
+                message = "비만 전단계 (과체중)";
+                colorClass = "bg-yellow-50 border-yellow-200 text-yellow-700";
+                icon = "⚠️";
+            } else if (bmi < 30) {
+                message = "1단계 비만";
+                colorClass = "bg-orange-50 border-orange-200 text-orange-700";
+                icon = "🚨";
+            } else {
+                message = "2단계 비만 (고도비만)";
+                colorClass = "bg-red-50 border-red-200 text-red-700";
+                icon = "🔥";
+            }
+
+            resultDiv.className = `mt-4 p-5 rounded-xl border text-center transition-all duration-500 ${colorClass}`;
+            resultDiv.innerHTML = `
+                <div class="text-3xl mb-1">${icon}</div>
+                <div class="text-sm text-slate-500 mb-1">나의 BMI 지수</div>
+                <div class="text-3xl font-black mb-2">${bmi}</div>
+                <div class="font-bold text-lg">${message}</div>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+
 
         // --- CHART CONFIGURATION (Existing) ---
         
-        // Utility Function for Label Wrapping (16 char limit)
+        // Utility Function for Label Wrapping
         function formatLabel(str, maxwidth) {
             var sections = [];
             var words = str.split(" ");
@@ -586,7 +649,7 @@
             x: Math.floor(Math.random() * 250) + 30, // Minutes of exercise
             y: Number((Math.random() * 3 - 1).toFixed(2)) // BMI Change (-1 to +2)
         })).map(pt => {
-            // Add correlation logic: Less exercise = Higher BMI increase
+            // Add correlation logic
             pt.y = parseFloat((2.5 - (pt.x / 100)).toFixed(2)) + (Math.random() * 0.5 - 0.25);
             return pt;
         });
@@ -679,5 +742,4 @@
 
     </script>
 </body>
-
 </html>
