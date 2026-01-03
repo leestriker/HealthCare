@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>추위와 활동량, 그리고 면역력 시뮬레이터</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Palette: 'Frost & Fire' -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        /* Range Slider Custom Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #f97316;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        .gauge-container {
+            position: relative;
+            height: 150px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-[#1e3a8a] text-white py-12 px-4 shadow-lg">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-3xl md:text-5xl font-black mb-4">추위, 활동량, 그리고 면역력</h1>
+            <p class="text-lg md:text-xl text-[#bfdbfe] font-light max-w-2xl mx-auto">
+                기온이 1°C 떨어질 때 내 몸은 어떻게 변할까요?<br>
+                <strong>인터랙티브 시뮬레이터</strong>로 확인해보세요.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-8 space-y-12">
+
+        <!-- NEW: Interactive Simulator Section -->
+        <section class="bg-white rounded-xl shadow-xl border-t-8 border-[#f97316] p-6 md:p-10 overflow-hidden relative">
+            <div class="absolute top-0 right-0 p-4 opacity-10 text-9xl pointer-events-none">❄️</div>
+            
+            <h2 class="text-3xl font-bold text-[#1e3a8a] mb-2">🌡️ 체온-면역력 시뮬레이터</h2>
+            <p class="text-gray-600 mb-8">
+                아래 슬라이더를 움직여 <strong>현재 기온</strong>을 설정하세요. 기온 변화에 따른 신체 활성도와 면역 위험도를 실시간으로 계산합니다.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+                <!-- Control Panel -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <label for="tempSlider" class="block text-sm font-bold text-gray-700 mb-4">
+                        현재 기온 설정 (℃)
+                    </label>
+                    
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-blue-600 font-bold">-20℃</span>
+                        <span class="text-red-500 font-bold">20℃</span>
+                    </div>
+                    
+                    <input type="range" id="tempSlider" min="-20" max="20" value="5" step="1" class="w-full mb-6">
+                    
+                    <div class="text-center">
+                        <span class="text-sm text-gray-500">설정된 기온</span>
+                        <div class="text-5xl font-black text-[#1e3a8a] mt-2" id="currentTempDisplay">5℃</div>
+                        <div class="text-sm text-[#f97316] font-bold mt-2" id="tempStatus">활동 적정 기준</div>
+                    </div>
+
+                    <div class="mt-8 text-xs text-gray-500 space-y-2 bg-white p-3 rounded border">
+                        <p><strong>*계산 알고리즘:</strong></p>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>기준점: 5℃ (활동 임계점)</li>
+                            <li>1℃ 하락 시 근육 활동: <span class="text-red-500">-4.5%</span></li>
+                            <li>1℃ 하락 시 근육 긴장: <span class="text-red-500">+3.0%</span></li>
+                            <li>1℃ 하락 시 면역 위험: <span class="text-red-500">+2.8%</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Visualization Panel -->
+                <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    
+                    <!-- Metric 1: Muscle Activity -->
+                    <div class="text-center">
+                        <h4 class="font-bold text-gray-700 mb-2">근육 활동성</h4>
+                        <div class="gauge-container">
+                            <canvas id="gaugeActivity"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2" id="textActivity">정상 수준</p>
+                    </div>
+
+                    <!-- Metric 2: Muscle Stiffness -->
+                    <div class="text-center">
+                        <h4 class="font-bold text-gray-700 mb-2">근육/혈관 긴장도</h4>
+                        <div class="gauge-container">
+                            <canvas id="gaugeStiffness"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2" id="textStiffness">유연함</p>
+                    </div>
+
+                    <!-- Metric 3: Immunity Risk -->
+                    <div class="text-center">
+                        <h4 class="font-bold text-gray-700 mb-2">면역력 저하 위험</h4>
+                        <div class="gauge-container">
+                            <canvas id="gaugeImmunity"></canvas>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2" id="textImmunity">안전</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Original Data Section 1: Trend -->
+        <section class="bg-white rounded-xl shadow-md p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-[#1e3a8a] mb-2">기온과 활동량의 상관관계 데이터</h2>
+            <p class="text-gray-600 mb-6">
+                실제 월별 데이터에서도 기온이 영하로 떨어지는 시점에 활동량이 급감하는 '활동 공백기'가 뚜렷하게 나타납니다.
+            </p>
+            <div class="chart-container">
+                <canvas id="tempActivityChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Original Data Section 2: Solutions -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-bold text-[#1e3a8a] mb-4">면역력을 지키는 겨울 운동 순위</h2>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="solutionChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6 flex flex-col justify-center">
+                <h3 class="text-lg font-bold text-[#f97316] mb-4">💡 왜 '실내 계단 오르기'인가?</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="bg-[#1e3a8a] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 text-sm flex-shrink-0">1</span>
+                        <p class="text-gray-700 text-sm"><strong>체온 상승 속도:</strong> 평지 걷기보다 2배 빠르게 체온을 높여 면역 세포를 활성화합니다.</p>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-[#1e3a8a] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 text-sm flex-shrink-0">2</span>
+                        <p class="text-gray-700 text-sm"><strong>안전성:</strong> 차가운 공기로 인한 호흡기 자극과 빙판길 낙상 위험이 없습니다.</p>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-[#1e3a8a] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 text-sm flex-shrink-0">3</span>
+                        <p class="text-gray-700 text-sm"><strong>근력 강화:</strong> 활동량 부족으로 약해지기 쉬운 하체 근육을 효과적으로 자극합니다.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Common Helpers ---
+        function formatLabel(str) {
+            if (str.length <= 16) return str;
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + " " + words[i]).length < 16) {
+                    currentLine += " " + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const commonTooltipOptions = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    return Array.isArray(label) ? label.join(' ') : label;
+                }
+            }
+        };
+
+        // ==========================================
+        // SIMULATOR LOGIC (Javascript Calculation)
+        // ==========================================
+        
+        // 1. Setup Gauge Charts
+        const gaugeOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '80%',
+            plugins: { tooltip: { enabled: false }, legend: { display: false } },
+            events: [] // Disable hover events for static feel
+        };
+
+        // Helper to create gauge chart
+        function createGauge(ctx, color) {
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Value', 'Remainder'],
+                    datasets: [{
+                        data: [100, 0],
+                        backgroundColor: [color, '#e5e7eb'],
+                        borderWidth: 0
+                    }]
+                },
+                options: gaugeOptions,
+                plugins: [{
+                    id: 'textCenter',
+                    beforeDraw: function(chart) {
+                        var width = chart.width, height = chart.height, ctx = chart.ctx;
+                        ctx.restore();
+                        var fontSize = (height / 114).toFixed(2);
+                        ctx.font = "bold " + fontSize + "em sans-serif";
+                        ctx.textBaseline = "middle";
+                        ctx.fillStyle = "#1f2937";
+                        
+                        var text = chart.data.datasets[0].data[0] + "%",
+                            textX = Math.round((width - ctx.measureText(text).width) / 2),
+                            textY = height / 2;
+                        ctx.fillText(text, textX, textY);
+                        ctx.save();
+                    }
+                }]
+            });
+        }
+
+        const chartActivity = createGauge(document.getElementById('gaugeActivity').getContext('2d'), '#3b82f6');
+        const chartStiffness = createGauge(document.getElementById('gaugeStiffness').getContext('2d'), '#f97316');
+        const chartImmunity = createGauge(document.getElementById('gaugeImmunity').getContext('2d'), '#ef4444');
+
+        // 2. Calculation Logic
+        const tempSlider = document.getElementById('tempSlider');
+        const currentTempDisplay = document.getElementById('currentTempDisplay');
+        const tempStatus = document.getElementById('tempStatus');
+        
+        // Text outputs
+        const textActivity = document.getElementById('textActivity');
+        const textStiffness = document.getElementById('textStiffness');
+        const textImmunity = document.getElementById('textImmunity');
+
+        function updateSimulator() {
+            const temp = parseInt(tempSlider.value);
+            currentTempDisplay.innerText = temp + "℃";
+
+            // Baseline: 5C.
+            // Formula:
+            // If temp < 5:
+            //   Delta = 5 - temp
+            //   Activity Drop = Delta * 4.5 (Max 100)
+            //   Stiffness Increase = Delta * 3.0 (Max 100)
+            //   Immunity Risk = Delta * 2.8 (Max 100)
+            
+            let delta = 0;
+            let activityVal = 100;
+            let stiffnessVal = 0;
+            let immunityRiskVal = 0;
+
+            if (temp < 5) {
+                delta = 5 - temp;
+                tempStatus.innerText = "⚠️ 추위 노출 단계";
+                tempStatus.className = "text-sm text-blue-600 font-bold mt-2";
+                
+                // Calculate
+                activityVal = Math.max(10, 100 - (delta * 4.5)); // Drops
+                stiffnessVal = Math.min(100, delta * 3.0); // Increases
+                immunityRiskVal = Math.min(90, delta * 2.8); // Increases
+            } else {
+                tempStatus.innerText = "✅ 활동 적정 기온";
+                tempStatus.className = "text-sm text-green-600 font-bold mt-2";
+                
+                // Reset to optimal
+                activityVal = 100;
+                stiffnessVal = 0;
+                immunityRiskVal = 0;
+            }
+
+            // Update Charts
+            chartActivity.data.datasets[0].data = [Math.round(activityVal), 100 - Math.round(activityVal)];
+            chartActivity.update();
+
+            chartStiffness.data.datasets[0].data = [Math.round(stiffnessVal), 100 - Math.round(stiffnessVal)];
+            chartStiffness.update();
+
+            chartImmunity.data.datasets[0].data = [Math.round(immunityRiskVal), 100 - Math.round(immunityRiskVal)];
+            chartImmunity.update();
+
+            // Update Text Description
+            if (activityVal < 50) textActivity.innerText = "활동량 심각한 저하";
+            else if (activityVal < 80) textActivity.innerText = "활동량 감소 시작";
+            else textActivity.innerText = "정상 활동 수준";
+
+            if (stiffnessVal > 60) textStiffness.innerText = "부상 위험 매우 높음";
+            else if (stiffnessVal > 20) textStiffness.innerText = "근육 경직 시작";
+            else textStiffness.innerText = "유연한 상태";
+
+            if (immunityRiskVal > 50) textImmunity.innerText = "질병 취약 상태";
+            else if (immunityRiskVal > 20) textImmunity.innerText = "주의 필요";
+            else textImmunity.innerText = "안전 상태";
+        }
+
+        // Initialize listener
+        tempSlider.addEventListener('input', updateSimulator);
+        
+        // Initial call
+        updateSimulator();
+
+
+        // ==========================================
+        // EXISTING CHARTS (Static Data)
+        // ==========================================
+
+        // Temp vs Activity Chart
+        const ctx1 = document.getElementById('tempActivityChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                datasets: [
+                    {
+                        label: '평균 기온 (°C)',
+                        data: [-2.5, 0.3, 5.8, 12.2, 17.5, 22.1, 25.4, 26.2, 21.5, 15.0, 7.8, 0.5],
+                        type: 'line',
+                        borderColor: '#f97316',
+                        backgroundColor: '#f97316',
+                        borderWidth: 3,
+                        yAxisID: 'y1',
+                        tension: 0.4,
+                        order: 0
+                    },
+                    {
+                        label: '평균 활동량 (보행수)',
+                        data: [4500, 5100, 6800, 8200, 9500, 9200, 8100, 7800, 9800, 10500, 8500, 5200],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4,
+                        order: 1,
+                        yAxisID: 'y'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    tooltip: commonTooltipOptions,
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { display: true, position: 'left', grid: { display: false } },
+                    y1: { display: true, position: 'right', grid: { color: '#e5e7eb' } }
+                }
+            }
+        });
+
+        // Solution Ranking Chart
+        const ctx5 = document.getElementById('solutionChart').getContext('2d');
+        const formattedLabels = ['실내 계단 오르기', '고강도 홈트레이닝', '따뜻한 물 수영', '실내 스트레칭', '추운 야외 조깅'].map(formatLabel);
+        new Chart(ctx5, {
+            type: 'bar',
+            data: {
+                labels: formattedLabels,
+                datasets: [{
+                    label: '면역 효율성 점수',
+                    data: [92, 88, 75, 60, 45],
+                    backgroundColor: ['#f97316', '#fb923c', '#3b82f6', '#60a5fa', '#94a3b8'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: commonTooltipOptions },
+                scales: { x: { max: 100, grid: { display: false } }, y: { grid: { display: false } } }
+            }
+        });
+
+    </script>
+</body>
+</html>
